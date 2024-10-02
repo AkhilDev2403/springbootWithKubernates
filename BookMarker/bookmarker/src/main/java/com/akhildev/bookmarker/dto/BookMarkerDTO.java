@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class BookMarkerDTO {  //for pagination
-    private List<BookMarkerEntity> data;
+    private List<BookMarkerResDTO> data;
     private long totalElements;
     private int totalPages;
     private int currentPage;
@@ -23,7 +23,7 @@ public class BookMarkerDTO {  //for pagination
     private boolean hasNextPage;
     private boolean hasPreviousPage;
 
-    public BookMarkerDTO(Page<BookMarkerEntity> bookMarkerPage) {
+    public BookMarkerDTO(Page<BookMarkerResDTO> bookMarkerPage) {
         this.setData(bookMarkerPage.getContent());
         this.setTotalElements(bookMarkerPage.getTotalElements());
         this.setTotalPages(bookMarkerPage.getTotalPages());

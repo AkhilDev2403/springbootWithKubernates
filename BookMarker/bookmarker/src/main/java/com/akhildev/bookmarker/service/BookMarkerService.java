@@ -1,10 +1,13 @@
 package com.akhildev.bookmarker.service;
 
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
+import com.akhildev.bookmarker.dto.BookMarkerResDTO;
 import com.akhildev.bookmarker.entity.BookMarkerEntity;
+import com.akhildev.bookmarker.mapper.BookMarksMapper;
 import com.akhildev.bookmarker.repository.BookMarkerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +21,9 @@ import java.util.List;
 public class BookMarkerService {
 
     private final BookMarkerRepository bookMarkerRepository;
+
+    //for mapping
+    private final BookMarksMapper bookMarksMapper;
 
     /***
     public List<BookMarkerEntity> getAllBookMarkers(Integer page) {
@@ -60,12 +66,26 @@ public class BookMarkerService {
      }
      **/
 
+
+
+    /**
     public BookMarkerDTO getAllBookMarkers(Integer page) {
         int pageNumber = page < 1 ? 0 : page-1;     //user pov page should starts from 1, in JPA pov starts with 0.
         Pageable pageable = PageRequest.of(pageNumber, 2, Sort.Direction.DESC, "createdAt"); //sort the page in desc order based the time the book are added(private Instant createdAt;) that's why we specified this field in Entity
         return new BookMarkerDTO(bookMarkerRepository.findAll(pageable));
     }
+**/
 
     // in above we're simply reading the data, not modifying. so it's better to read from dto rather than loading the
-    // entity class directly to the client -  we can use the concept - DTO PROJECTION   
+    // entity class directly to the client -  we can use the concept - DTO PROJECTION   .
+    // we are returning all the data directly from Entity. now resolve this by 1. using a mapper class
+
+
+    // here we are mapping all the entities into the mapper then map it to dto.
+    public BookMarkerDTO getAllBookMarkers(Integer page) {
+        int pageNumber = page < 1 ? 0 : page-1;     //user pov page should starts from 1, in JPA pov starts with 0.
+        Pageable pageable = PageRequest.of(pageNumber, 2, Sort.Direction.DESC, "createdAt"); //sort the page in desc order based the time the book are added(private Instant createdAt;) that's why we specified this field in Entity
+        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.findAll(pageable).map(bookMarksMapper::toDTO);     // or map(bookMark -> bookMarksMapper.toDTO(bookMark)
+        return new BookMarkerDTO(resDTO);
+    }
 }
