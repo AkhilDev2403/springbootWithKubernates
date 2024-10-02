@@ -82,10 +82,22 @@ public class BookMarkerService {
 
 
     // here we are mapping all the entities into the mapper then map it to dto.
+    /** 1.
     public BookMarkerDTO getAllBookMarkers(Integer page) {
         int pageNumber = page < 1 ? 0 : page-1;     //user pov page should starts from 1, in JPA pov starts with 0.
         Pageable pageable = PageRequest.of(pageNumber, 2, Sort.Direction.DESC, "createdAt"); //sort the page in desc order based the time the book are added(private Instant createdAt;) that's why we specified this field in Entity
         Page<BookMarkerResDTO> resDTO = bookMarkerRepository.findAll(pageable).map(bookMarksMapper::toDTO);     // or map(bookMark -> bookMarksMapper.toDTO(bookMark)
         return new BookMarkerDTO(resDTO);
+    }**/
+
+
+    //2. instead of passing the entire entity then mapping we can do DTO projection
+    public BookMarkerDTO getAllBookMarkers(Integer page) {
+        int pageNumber = page < 1 ? 0 : page-1;
+        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.Direction.DESC, "createdAt");
+        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.findAllBookMarkers(pageable);
+        return new BookMarkerDTO(resDTO);
     }
+
+
 }
