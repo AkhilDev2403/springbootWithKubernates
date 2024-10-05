@@ -14,8 +14,8 @@ import java.time.Instant;
 public class BookMarkerEntity {
 
     @Id
-    @SequenceGenerator(name = "bm_id_seq_gen", sequenceName = "bm_id_seq")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bm_id_seq_gen")
+//    @SequenceGenerator(name = "bm_id_seq_gen", sequenceName = "bm_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -28,3 +28,9 @@ public class BookMarkerEntity {
 
     private Instant createdAt;
 }
+
+
+//Remove the Sequence Mapping from the Entity: Check your entity class where you're defining the primary key. I
+// t seems you might have used a @GeneratedValue(strategy = GenerationType.SEQUENCE) annotation,
+// which is causing Hibernate to expect a sequence.
+// For MySQL, you need to use GenerationType.IDENTITY to match the AUTO_INCREMENT used in the database.

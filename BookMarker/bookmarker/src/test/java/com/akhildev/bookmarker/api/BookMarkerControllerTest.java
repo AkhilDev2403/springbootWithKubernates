@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.MySQLContainer;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:tc:mysql:8.0.36:///test"
+})
 public class BookMarkerControllerTest {
 
     @Autowired
@@ -30,7 +35,23 @@ public class BookMarkerControllerTest {
 
     private List<BookMarkerEntity> bookMarks;
 
-    @BeforeEach
+    /**
+    private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0.32")
+            .withDatabaseName("test")
+            .withUsername("root")
+            .withPassword("root");       -> Alternate way to handle this is simply specifying the url at @TestPropertySource(...)
+
+     @BeforeAll
+     public static void startContainer() {
+     mysqlContainer.start();
+     System.setProperty("DB_URL", mysqlContainer.getJdbcUrl());
+     System.setProperty("DB_USERNAME", mysqlContainer.getUsername());
+     System.setProperty("DB_PASSWORD", mysqlContainer.getPassword());
+     }
+     
+     **/
+
+    @BeforeEach                //before starting the test, removing all data from db
     void setUp() {
         bookMarkerRepository.deleteAllInBatch();
 
