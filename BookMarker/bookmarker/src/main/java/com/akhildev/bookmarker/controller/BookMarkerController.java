@@ -3,11 +3,13 @@ package com.akhildev.bookmarker.controller;
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
 import com.akhildev.bookmarker.dto.request.BookmarkCreateRequestDTO;
+import com.akhildev.bookmarker.dto.response.BookmarkCreateResDTO;
 import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import com.akhildev.bookmarker.service.BookMarkerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,4 +39,12 @@ public class BookMarkerController {
     public BookMarkerResDTO createBookMarker(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
         return bookMarkerService.createBookMarker(requestDTO);
     }
+
+    //another way to implement the same above api but used Model mapper
+    @PostMapping("/create")
+    public ResponseEntity<BookmarkCreateResDTO> create(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
+        BookmarkCreateResDTO response = bookMarkerService.create(requestDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
 }

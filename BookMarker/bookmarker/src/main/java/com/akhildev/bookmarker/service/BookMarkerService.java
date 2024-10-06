@@ -4,11 +4,14 @@ import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResponseDTO;
 import com.akhildev.bookmarker.dto.request.BookmarkCreateRequestDTO;
+import com.akhildev.bookmarker.dto.response.BookmarkCreateResDTO;
 import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import com.akhildev.bookmarker.mapper.BookMarksMapper;
 import com.akhildev.bookmarker.repository.BookMarkerRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,9 @@ public class BookMarkerService {
 
     //for mapping
     private final BookMarksMapper bookMarksMapper;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     /***
     public List<BookMarkerEntity> getAllBookMarkers(Integer page) {
@@ -113,9 +119,15 @@ public class BookMarkerService {
         return new BookMarkerDTO(resDTO);
     }
 
-    public BookMarkerResDTO createBookMarker(@Valid BookmarkCreateRequestDTO requestDTO) {
+    public BookMarkerResDTO createBookMarker(BookmarkCreateRequestDTO requestDTO) {
         BookMarkerEntity bookMarker = new BookMarkerEntity(null, requestDTO.getTitle(), requestDTO.getAuthor(), requestDTO.getUrl(), Instant.now());
         BookMarkerEntity bookMarkerEntity = bookMarkerRepository.save(bookMarker);
         return bookMarksMapper.toDTO(bookMarkerEntity);
+    }
+
+    public BookmarkCreateResDTO create(BookmarkCreateRequestDTO requestDTO) {
+        BookMarkerEntity entity = new BookMarkerEntity(null, requestDTO.getTitle(), requestDTO.getAuthor(), requestDTO.getUrl(), Instant.now());
+        bookMarkerRepository.save(entity);
+        return modelMapper.map(entity, BookmarkCreateResDTO.class);
     }
 }
