@@ -10,8 +10,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-public class BookMarkerResDTO {
+//@NoArgsConstructor - getting error because of Spring Data JPA couldn't find which constructor to chose
+public class BookMarkerResDTO {   // class based DTO projection
     private Long id;
     private String title;
     private String author;

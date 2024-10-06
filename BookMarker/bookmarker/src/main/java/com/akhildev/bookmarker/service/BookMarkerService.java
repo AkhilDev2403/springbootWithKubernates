@@ -101,7 +101,8 @@ public class BookMarkerService {
     public BookMarkerDTO searchBookMarks(Integer page, String query) {    //http://localhost:8080/api/bookmarks/getAll?query=jwt
         int pageNumber = page < 1 ? 0 : page-1;
         Pageable pageable = PageRequest.of(pageNumber, 5, Sort.Direction.DESC, "createdAt");
-        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.searchBookMarks(pageable, query);
+//        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.searchBookMarks(pageable, query);   or
+        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.findByTitleContainsIgnoreCase(pageable, query);
         return new BookMarkerDTO(resDTO);
     }
 }
