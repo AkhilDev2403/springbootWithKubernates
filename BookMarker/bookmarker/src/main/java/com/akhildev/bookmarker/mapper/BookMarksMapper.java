@@ -1,5 +1,6 @@
 package com.akhildev.bookmarker.mapper;
 
+import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
 import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import org.springframework.stereotype.Component;
@@ -28,4 +29,5 @@ public class BookMarksMapper {
                 bookMarkerEntity.getUrl(),
                 bookMarkerEntity.getCreatedAt());
     }
+
 }

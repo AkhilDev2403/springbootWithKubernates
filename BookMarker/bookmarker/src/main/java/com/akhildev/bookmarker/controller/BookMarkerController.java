@@ -1,12 +1,14 @@
 package com.akhildev.bookmarker.controller;
 
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
+import com.akhildev.bookmarker.dto.BookMarkerResDTO;
+import com.akhildev.bookmarker.dto.request.BookmarkCreateRequestDTO;
+import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import com.akhildev.bookmarker.service.BookMarkerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/bookmarks/")
@@ -28,5 +30,11 @@ public class BookMarkerController {
             return bookMarkerService.getAllBookMarkers(page);
         }
         return bookMarkerService.searchBookMarks(page, query);
+    }
+
+    @PostMapping("/add")
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookMarkerResDTO createBookMarker(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
+        return bookMarkerService.createBookMarker(requestDTO);
     }
 }

@@ -3,8 +3,11 @@ package com.akhildev.bookmarker.service;
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResponseDTO;
+import com.akhildev.bookmarker.dto.request.BookmarkCreateRequestDTO;
+import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import com.akhildev.bookmarker.mapper.BookMarksMapper;
 import com.akhildev.bookmarker.repository.BookMarkerRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -106,5 +111,11 @@ public class BookMarkerService {
         Page<BookMarkerResDTO> resDTO = bookMarkerRepository.findByTitleContainsIgnoreCase(pageable, query);
 //        Page<BookMarkerResponseDTO> response = bookMarkerRepository.findByTitleContainsIgnoreCase(pageable, query);
         return new BookMarkerDTO(resDTO);
+    }
+
+    public BookMarkerResDTO createBookMarker(@Valid BookmarkCreateRequestDTO requestDTO) {
+        BookMarkerEntity bookMarker = new BookMarkerEntity(null, requestDTO.getTitle(), requestDTO.getAuthor(), requestDTO.getUrl(), Instant.now());
+        BookMarkerEntity bookMarkerEntity = bookMarkerRepository.save(bookMarker);
+        return bookMarksMapper.toDTO(bookMarkerEntity);
     }
 }
