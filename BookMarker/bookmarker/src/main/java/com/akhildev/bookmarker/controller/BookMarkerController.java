@@ -15,8 +15,18 @@ public class BookMarkerController {
 
     private final BookMarkerService bookMarkerService;
 
-    @GetMapping("/getAll")    //http://localhost:8080/api/bookmarks/getAll?page=2
-    public BookMarkerDTO getAllBookMarkers(@RequestParam(name = "page", defaultValue = "1") Integer page) {
-        return bookMarkerService.getAllBookMarkers(page);
+//    @GetMapping("/getAll")    //http://localhost:8080/api/bookmarks/getAll?page=2
+//    public BookMarkerDTO getAllBookMarkers(@RequestParam(name = "page", defaultValue = "1") Integer page) {
+//        return bookMarkerService.getAllBookMarkers(page);
+//    }
+
+    //with pagination and searching
+    @GetMapping("/getAll")
+    public BookMarkerDTO getAllBookMarkers(@RequestParam(name = "page", defaultValue = "1") Integer page,
+                                           @RequestParam(name = "query", defaultValue = "")String query) {     // u can also specify required = false to mark this field as an optional
+        if(query == null || query.trim().isEmpty()){
+            return bookMarkerService.getAllBookMarkers(page);
+        }
+        return bookMarkerService.searchBookMarks(page, query);
     }
 }

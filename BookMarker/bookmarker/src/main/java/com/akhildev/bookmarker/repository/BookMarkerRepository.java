@@ -11,4 +11,14 @@ public interface BookMarkerRepository extends JpaRepository<BookMarkerEntity, Lo
 
     @Query("select  new  com.akhildev.bookmarker.dto.BookMarkerResDTO(b.id, b.title, b.url, b.author, b.createdAt) from BookMarkerEntity b")
     Page<BookMarkerResDTO> findAllBookMarkers(Pageable pageable);
+
+    @Query("""
+        select  new  com.akhildev.bookmarker.dto.BookMarkerResDTO(b.id, b.title, b.url, b.author, b.createdAt) from BookMarkerEntity b
+        where lower(b.title) like lower(concat('%', :query, '%')) 
+    """)
+    Page<BookMarkerResDTO> searchBookMarks(Pageable pageable, String query);
+//    Hibernate: select bme1_0.id,bme1_0.title,bme1_0.url,bme1_0.author,bme1_0.created_at from bookmarks bme1_0 where lower(bme1_0.title) like lower(('%'||?||'%')) escape '' order by bme1_0.created_at desc fetch first ? rows only
+//    since we're passing Pageable here, spring will take care of the pagination automatically, don't have to specify anything
+
+
 }

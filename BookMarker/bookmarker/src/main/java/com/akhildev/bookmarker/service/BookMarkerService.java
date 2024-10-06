@@ -2,21 +2,17 @@ package com.akhildev.bookmarker.service;
 
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
-import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import com.akhildev.bookmarker.mapper.BookMarksMapper;
 import com.akhildev.bookmarker.repository.BookMarkerRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BookMarkerService {
 
@@ -92,6 +88,7 @@ public class BookMarkerService {
 
 
     //2. instead of passing the entire entity then mapping we can do DTO projection
+    @Transactional(readOnly = true)
     public BookMarkerDTO getAllBookMarkers(Integer page) {
         int pageNumber = page < 1 ? 0 : page-1;
         Pageable pageable = PageRequest.of(pageNumber, 5, Sort.Direction.DESC, "createdAt");
@@ -100,4 +97,11 @@ public class BookMarkerService {
     }
 
 
+    @Transactional(readOnly = true)  //it's read only operation no database manipulation involved so its true
+    public BookMarkerDTO searchBookMarks(Integer page, String query) {    //http://localhost:8080/api/bookmarks/getAll?query=jwt
+        int pageNumber = page < 1 ? 0 : page-1;
+        Pageable pageable = PageRequest.of(pageNumber, 5, Sort.Direction.DESC, "createdAt");
+        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.searchBookMarks(pageable, query);
+        return new BookMarkerDTO(resDTO);
+    }
 }
