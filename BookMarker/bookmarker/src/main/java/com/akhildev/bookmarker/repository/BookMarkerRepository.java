@@ -1,6 +1,7 @@
 package com.akhildev.bookmarker.repository;
 
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
+import com.akhildev.bookmarker.dto.BookMarkerResponseDTO;
 import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,5 +25,8 @@ public interface BookMarkerRepository extends JpaRepository<BookMarkerEntity, Lo
 
 //    2. Spring Data JPA
     Page<BookMarkerResDTO> findByTitleContainsIgnoreCase(Pageable pageable, String query);
+
+//    interface based projection
+//    Page<BookMarkerResponseDTO> findByTitleContainsIgnoreCase(Pageable pageable, String query);
 
 }

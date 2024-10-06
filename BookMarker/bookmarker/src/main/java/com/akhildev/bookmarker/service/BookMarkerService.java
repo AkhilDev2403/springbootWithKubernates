@@ -2,6 +2,7 @@ package com.akhildev.bookmarker.service;
 
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
+import com.akhildev.bookmarker.dto.BookMarkerResponseDTO;
 import com.akhildev.bookmarker.mapper.BookMarksMapper;
 import com.akhildev.bookmarker.repository.BookMarkerRepository;
 import lombok.RequiredArgsConstructor;
@@ -103,6 +104,7 @@ public class BookMarkerService {
         Pageable pageable = PageRequest.of(pageNumber, 5, Sort.Direction.DESC, "createdAt");
 //        Page<BookMarkerResDTO> resDTO = bookMarkerRepository.searchBookMarks(pageable, query);   or
         Page<BookMarkerResDTO> resDTO = bookMarkerRepository.findByTitleContainsIgnoreCase(pageable, query);
+//        Page<BookMarkerResponseDTO> response = bookMarkerRepository.findByTitleContainsIgnoreCase(pageable, query);
         return new BookMarkerDTO(resDTO);
     }
 }

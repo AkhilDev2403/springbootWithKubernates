@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -33,6 +34,16 @@ public class BookMarkerDTO {  //for pagination
         this.setHasNextPage(bookMarkerPage.hasNext());
         this.setHasPreviousPage(bookMarkerPage.hasPrevious());
     }
+
+//    public BookMarkerDTO(Page<BookMarkerResponseDTO> bookMarkerResponseDTO) {   interface based projection
+//        this.setData(new ArrayList<>());
+//        this.setTotalPages(bookMarkerResponseDTO.getTotalPages());
+//        this.setTotalElements(bookMarkerResponseDTO.getTotalElements());
+//        this.setCurrentPage(bookMarkerResponseDTO.getNumber() + 1);
+//        this.setFirstPage(bookMarkerResponseDTO.isFirst());
+//        this.setLastPage(bookMarkerResponseDTO.isLast());
+//        this.setHasNextPage(bookMarkerResponseDTO.hasNext());
+//    }
 }
 
 
