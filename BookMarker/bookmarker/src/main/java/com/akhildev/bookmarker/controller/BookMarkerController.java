@@ -1,5 +1,8 @@
 package com.akhildev.bookmarker.controller;
 
+import com.akhildev.bookmarker.core.model.ApiResponse;
+import com.akhildev.bookmarker.core.model.Constants;
+import com.akhildev.bookmarker.core.model.CustomHttpStatus;
 import com.akhildev.bookmarker.dto.BookMarkerDTO;
 import com.akhildev.bookmarker.dto.BookMarkerResDTO;
 import com.akhildev.bookmarker.dto.request.BookmarkCreateRequestDTO;
@@ -11,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookmarks/")
@@ -34,17 +40,54 @@ public class BookMarkerController {
         return bookMarkerService.searchBookMarks(page, query);
     }
 
-    @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public BookMarkerResDTO createBookMarker(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
-        return bookMarkerService.createBookMarker(requestDTO);
-    }
+    /**
+     * Response:
+     * {
+     *     "id": 601,
+     *     "title": "Pokemon",
+     *     "author": "Test",
+     *     "url": "https://www.pokemon.com/us",
+     *     "createdAt": "2024-10-07T03:50:55.204348612Z"
+     * }
+     *
+     * **/
+
+//    @PostMapping("/add")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public ResponseEntity<BookmarkCreateResDTO> createBookMarker(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
+//        return ResponseEntity.status(HttpStatus.CREATED).body(bookMarkerService.create(requestDTO));
+//    }
 
     //another way to implement the same above api but used Model mapper
     @PostMapping("/create")
     public ResponseEntity<BookmarkCreateResDTO> create(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
         BookmarkCreateResDTO response = bookMarkerService.create(requestDTO);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+//    with proper exception handler
+    /**
+     * your response would look like this now
+     *
+     * {
+     *     "responseData": {
+     *         "data": {
+     *             "id": 651,
+     *             "title": "Pokemon",
+     *             "author": "Test",
+     *             "url": "https://www.pokemon.com/us",
+     *             "createdAt": "2024-10-07T03:49:02.794162452Z"
+     *         }
+     *     },
+     *     "message": "success",
+     *     "status": 0
+     * }
+     * **/
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse> createBookMarker(@RequestBody @Valid BookmarkCreateRequestDTO requestDTO){
+        Map data = new HashMap();
+        data.put(Constants.DATA,bookMarkerService.create(requestDTO));
+        return ResponseEntity.ok(new ApiResponse(data, Constants.SUCCESS, CustomHttpStatus.SUCCESS.ordinal()));
     }
 
 }
