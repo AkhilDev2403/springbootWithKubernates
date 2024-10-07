@@ -10,6 +10,6 @@ public class BookmarkCreateRequestDTO {
     @NotEmpty(message = "Title should not be null")
     private String title;
     private String author;
-    @NotEmpty(message = "url should not be null")
+    @NotEmpty(message = "Url should not be null")
     private String url;
 }

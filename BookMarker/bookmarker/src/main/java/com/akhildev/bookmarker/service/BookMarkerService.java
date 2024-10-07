@@ -30,8 +30,8 @@ public class BookMarkerService {
     //for mapping
     private final BookMarksMapper bookMarksMapper;
 
-    @Autowired
-    private ModelMapper modelMapper;
+//    @Autowired -  Field injection (using @Autowired directly on fields) is not recommended in modern Spring
+    private final ModelMapper modelMapper; //Constructor injection ensures that dependencies are passed to the class at the time of its creation, making it clear what dependencies are required for the class to function
 
     /***
     public List<BookMarkerEntity> getAllBookMarkers(Integer page) {

@@ -3,11 +3,13 @@ package com.akhildev.bookmarker.api;
 import com.akhildev.bookmarker.entity.BookMarkerEntity;
 import com.akhildev.bookmarker.repository.BookMarkerRepository;
 import org.hamcrest.CoreMatchers;
+import org.hibernate.validator.internal.constraintvalidators.bv.NotNullValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MySQLContainer;
@@ -16,9 +18,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -34,6 +37,7 @@ public class BookMarkerControllerTest {
     private BookMarkerRepository bookMarkerRepository;
 
     private List<BookMarkerEntity> bookMarks;
+
 
     /**
     private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0.32")
@@ -86,6 +90,49 @@ public class BookMarkerControllerTest {
                  .andExpect(jsonPath("$.isLast", CoreMatchers.equalTo(false)))
                  .andExpect(jsonPath("$.hasNextPage", CoreMatchers.equalTo(true)))
                  .andExpect(jsonPath("$.hasPreviousPage", CoreMatchers.equalTo(false)));
+    }
+
+    @Test
+    public void shouldCreateBookMarkSuccessfully() throws Exception {
+        mvc.perform(
+                post("/api/bookmarks/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                  {
+                  "title" : "Pokemon",
+                  "author" : "Pokemon",
+                  "url" : "https://www.pokemon.com/us"
+                  }
+                  """)
+        )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.title", is("Pokemon")))
+                .andExpect(jsonPath("$.url", is("https://www.pokemon.com/us")));
+
+    }
+
+    @Test
+    void shouldFailToCreateBookmarkWhenUrlIsNotPresent() throws Exception {
+        this.mvc.perform(
+                        post("/api/bookmarks")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                {
+                    "title": "Pokemon",
+                    "author" : "Pokemon"
+                }
+                """)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(header().string("Content-Type", is("application/problem+json")))
+                .andExpect(jsonPath("$.type", is("https://zalando.github.io/problem/constraint-violation")))
+                .andExpect(jsonPath("$.title", is("Constraint Violation")))
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.violations", hasSize(1)))
+                .andExpect(jsonPath("$.violations[0].field", is("url")))
+                .andExpect(jsonPath("$.violations[0].message", is("Url should not be empty")))
+                .andReturn();
     }
 
 }
